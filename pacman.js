@@ -61,10 +61,22 @@ function displayStats() {
 function displayMenu() {
   console.log('\n\nSelect Option:\n');  // each \n creates a new line
   console.log('(d) Eat Dot');
-  for (i=0; i < ghosts.length; i++) {
-    console.log('(' + ghosts[i].menu_option + ') Eat ' + ghosts[i].name);
+  if (powerPellets > 0){
+  console.log('(p) Eat Power-Pellet');
+  }
+  for (var i=0; i < ghosts.length; i++) {
+    console.log( '(' + ghosts[i].menu_option + ') Eat ' + ghosts[i].name  + edibilityStatus(ghosts[i]) )
   }
   console.log('(q) Quit');
+}
+
+function edibilityStatus(ghost){
+  if (ghost.edible) {
+    return ' (edible)';
+  } else {
+    return ' (inedible)';
+  }
+
 }
 
 function displayPrompt() {
@@ -79,12 +91,26 @@ function eatDot() {
   score += 10;
 }
 
+function eatPowerPellet() {
+  console.log('\nCHOMP!!');
+  score += 50;
+  powerPellets -= 1;
+  for (var i=0; i < ghosts.length; i++) {
+    ghosts[i].edible = true;
+  }
+}
+
 function eatGhost(ghost) {
     if (ghost.edible === false) {
       lives -= 1;
       gameover();
+      console.log('\n' + ghost.name + ' killed Pac-man!');
+    } else {
+      score += 200;
+      ghost.edible = false;
+      console.log('\nPac-man ate ' + ghost.name);
     }
-    console.log('\n' + ghost.name + ' killed Pac-man!');
+
 }
 
 // Process Player's Input
@@ -94,6 +120,14 @@ function processInput(key) {
     case 'q':
       process.exit();
       break;
+    case 'p':
+      if (powerPellets > 0){
+        eatPowerPellet();
+        break;
+      } else {
+        console.log('\nInvalid Command!');
+        break;
+      }
     case '1':
       eatGhost(inky);
       break;
