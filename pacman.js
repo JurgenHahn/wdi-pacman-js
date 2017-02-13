@@ -1,6 +1,7 @@
 // Setup initial game stats
 var score = 0;
 var lives = 2;
+var powerPellets = 4;
 
 
 // Define your ghosts here
@@ -36,6 +37,8 @@ var clyde = {
   edible: false
 };
 
+var ghosts = [inky, blinky, pinky, clyde]
+
 // Draw the screen functionality
 function drawScreen() {
   clearScreen();
@@ -52,11 +55,15 @@ function clearScreen() {
 
 function displayStats() {
   console.log('Score: ' + score + '     Lives: ' + lives);
+  console.log('\n\nPower-Pellets: ' + powerPellets);
 }
 
 function displayMenu() {
   console.log('\n\nSelect Option:\n');  // each \n creates a new line
   console.log('(d) Eat Dot');
+  for (i=0; i < ghosts.length; i++) {
+    console.log('(' + ghosts[i].menu_option + ') Eat ' + ghosts[i].name);
+  }
   console.log('(q) Quit');
 }
 
@@ -72,6 +79,13 @@ function eatDot() {
   score += 10;
 }
 
+function eatGhost(ghost) {
+    if (ghost.edible === false) {
+      lives -= 1;
+      gameover();
+    }
+    console.log('\n' + ghost.name + ' killed Pac-man!');
+}
 
 // Process Player's Input
 function processInput(key) {
@@ -79,6 +93,18 @@ function processInput(key) {
     case '\u0003': // This makes it so CTRL-C will quit the program
     case 'q':
       process.exit();
+      break;
+    case '1':
+      eatGhost(inky);
+      break;
+    case '2':
+      eatGhost(blinky);
+      break;
+    case '3':
+      eatGhost(pinky);
+      break;
+    case '4':
+      eatGhost(clyde);
       break;
     case 'd':
       eatDot();
@@ -88,6 +114,11 @@ function processInput(key) {
   }
 }
 
+function gameover() {
+  if (lives === 0){
+    process.exit();
+  }
+}
 
 //
 // YOU PROBABLY DON'T WANT TO CHANGE CODE BELOW THIS LINE
@@ -106,7 +137,7 @@ drawScreen();
 stdin.on('data', function(key) {
   process.stdout.write(key);
   processInput(key);
-  setTimeout(drawScreen, 300); // The command prompt will flash a message for 300 milliseoncds before it re-draws the screen. You can adjust the 300 number to increase this.
+  setTimeout(drawScreen, 800); // The command prompt will flash a message for 300 milliseoncds before it re-draws the screen. You can adjust the 300 number to increase this.
 });
 
 // Player Quits
