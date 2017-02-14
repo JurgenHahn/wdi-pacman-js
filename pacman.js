@@ -109,8 +109,6 @@ function eatDot() {
   dots -= 1;
 }
 
-
-
 function eatPowerPellet() {
   console.log('\nCHOMP!!');
   score += 50;
@@ -120,23 +118,17 @@ function eatPowerPellet() {
     ghosts[i].edible = true;
   }
 
-
-
 }
 
 function PowerPelletWearingOff() {
-  console.log('power pellet called');
   for (var i=0; i < ghosts.length; i++) {
     ghosts[i].edible = false;
   }
   ghostsEaten = 0.5;
   powerPelletAvailable = true;
+  drawScreen();
 
 }
-
-
-
-
 
 function eatGhost(ghost) {
     if (ghost.edible === false) {
