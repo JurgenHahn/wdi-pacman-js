@@ -1,7 +1,12 @@
 // Setup initial game stats
 var score = 0;
 var lives = 2;
+var dots = 240;
+var level = 1;
 var powerPellets = 4;
+var ghostsEaten = 0.5;
+var powerPelletAvailable = true;
+
 
 
 // Define your ghosts here
@@ -54,14 +59,26 @@ function clearScreen() {
 }
 
 function displayStats() {
-  console.log('Score: ' + score + '     Lives: ' + lives);
+  console.log('Score: ' + score + '     Lives: ' + lives + '     Dots: ' + dots + '     Level: ' + level);
   console.log('\n\nPower-Pellets: ' + powerPellets);
 }
 
 function displayMenu() {
   console.log('\n\nSelect Option:\n');  // each \n creates a new line
+  if (dots > 0){
   console.log('(d) Eat Dot');
-  if (powerPellets > 0){
+  }
+  if (dots > 9){
+    console.log('(f) Eat 10 Dots');
+  }
+  if (dots > 99){
+    console.log('(g) Eat 100 Dots');
+  }
+  if (dots > 0){
+  console.log('(h) Eat All Dots');
+  }
+
+  if (powerPellets > 0 && powerPelletAvailable === true){
   console.log('(p) Eat Power-Pellet');
   }
   for (var i=0; i < ghosts.length; i++) {
@@ -89,24 +106,50 @@ function displayPrompt() {
 function eatDot() {
   console.log('\nChomp!');
   score += 10;
+  dots -= 1;
 }
+
+
 
 function eatPowerPellet() {
   console.log('\nCHOMP!!');
   score += 50;
   powerPellets -= 1;
+  powerPelletAvailable = false;
   for (var i=0; i < ghosts.length; i++) {
     ghosts[i].edible = true;
   }
+
+
+
 }
+
+function PowerPelletWearingOff() {
+  console.log('power pellet called');
+  for (var i=0; i < ghosts.length; i++) {
+    ghosts[i].edible = false;
+  }
+  ghostsEaten = 0.5;
+  powerPelletAvailable = true;
+
+}
+
+
+
+
 
 function eatGhost(ghost) {
     if (ghost.edible === false) {
       lives -= 1;
-      gameover();
+      gameOver();
       console.log('\n' + ghost.name + ' killed Pac-man!');
     } else {
-      score += 200;
+      ghostsEaten *= 2;
+      score += (200 * ghostsEaten); //200, 400, 800, 1600
+      if (ghostsEaten === 8){
+        ghostsEaten = 0.5;
+        powerPelletAvailable = true;
+      }
       ghost.edible = false;
       console.log('\nPac-man ate ' + ghost.name);
     }
@@ -123,6 +166,8 @@ function processInput(key) {
     case 'p':
       if (powerPellets > 0){
         eatPowerPellet();
+        levelUp();
+        setTimeout(PowerPelletWearingOff, 3000);
         break;
       } else {
         console.log('\nInvalid Command!');
@@ -140,15 +185,65 @@ function processInput(key) {
     case '4':
       eatGhost(clyde);
       break;
+
     case 'd':
+      if (dots > 0) {
       eatDot();
+      levelUp();
       break;
+      } else {
+        console.log('\nInvalid Command!');
+      }
+
+      break;
+    case 'f':
+      if (dots > 9) {
+        for (var i=0; i<10; i++)
+          eatDot();
+          levelUp();
+          break;
+      } else {
+        console.log('\nInvalid Command!');
+        break;
+      }
+    case 'g':
+      if (dots > 99) {
+        for (var i=0; i<100; i++)
+          eatDot();
+          levelUp();
+          break
+      } else {
+        console.log('\nInvalid Command!');
+        break;
+      }
+    case 'h':
+      currentDots = dots
+      if (dots > 0) {
+        for (var i=0; i<currentDots; i++)
+          eatDot();
+          levelUp();
+          break
+      }else {
+        console.log('\nInvalid Command!');
+        break;
+      }
     default:
       console.log('\nInvalid Command!');
   }
 }
 
-function gameover() {
+function levelUp() {
+  if (dots === 0 && powerPellets === 0) {
+    level += 1;
+    dots = 240;
+    powerPellets = 4;
+    for (var i=0; i < ghosts.length; i++){
+      ghosts[i].edible = false;
+    }
+  }
+}
+
+function gameOver() {
   if (lives === 0){
     process.exit();
   }
