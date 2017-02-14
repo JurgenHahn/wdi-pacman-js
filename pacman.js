@@ -156,10 +156,10 @@ function processInput(key) {
       process.exit();
       break;
     case 'p':
-      if (powerPellets > 0){
+      if (powerPellets > 0 && powerPelletAvailable === true){
         eatPowerPellet();
         levelUp();
-        setTimeout(PowerPelletWearingOff, 3000);
+        setTimeout(PowerPelletWearingOff, 10000);
         break;
       } else {
         console.log('\nInvalid Command!');
